@@ -42,7 +42,6 @@ class AddActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext, "Success insert", Toast.LENGTH_SHORT)
                         .show()
                     onBackPressed()
-//                    loadDataDatabase()
                 } else {
                     Toast.makeText(applicationContext, "Failure insert", Toast.LENGTH_SHORT)
                         .show()
