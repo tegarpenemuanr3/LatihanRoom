@@ -1,12 +1,17 @@
 package com.tegarpenemuan.latihanroom.activity
 
+import android.app.Dialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.tegarpenemuan.latihanroom.R
 import com.tegarpenemuan.latihanroom.adapter.NoteAdapter
+import com.tegarpenemuan.latihanroom.data.local.entity.NoteEntity
 import com.tegarpenemuan.latihanroom.database.MyNoteDatabase
 import com.tegarpenemuan.latihanroom.databinding.ActivityMainBinding
 import com.tegarpenemuan.latihanroom.model.NoteModel
@@ -35,7 +40,36 @@ class MainActivity : AppCompatActivity() {
         adapter = NoteAdapter(
             listener = object : NoteAdapter.EventListener {
                 override fun onClick(item: NoteModel) {
-                   Toast.makeText(applicationContext,"${item.judul}",Toast.LENGTH_SHORT).show()
+                    val dialog = Dialog(this@MainActivity)
+                    dialog.window?.setBackgroundDrawableResource(android.R.color.transparent);
+                    dialog.setContentView(R.layout.dialog_opsi)
+
+                    val BtnEdit = dialog.findViewById(R.id.btnEditData) as Button
+                    val BtnHapus = dialog.findViewById(R.id.btnHapusData) as Button
+
+                    BtnEdit.setOnClickListener {
+                        startActivity(Intent(applicationContext, EditActivity::class.java))
+                    }
+                    BtnHapus.setOnClickListener {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            db?.noteDao()?.deleteNote(
+                                NoteEntity(
+                                    id = item.id,
+                                    judul = item.judul,
+                                    catatan = item.catatan
+                                )
+                            )
+                        }
+
+                        dialog.dismiss()
+                        loadDataDatabase()
+                        Toast.makeText(
+                            applicationContext,
+                            "Data Berhasil Dihapus",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    dialog.show()
                 }
             },
             notes = emptyList()
@@ -53,7 +87,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadDataDatabase() {
         CoroutineScope(Dispatchers.IO).launch {
             val note = db?.noteDao()?.getNote()
-            Log.d("MainActivity","db:${note}")
+            Log.d("MainActivity", "db:${note}")
             this@MainActivity.runOnUiThread {
                 note?.let {
                     val note = it.map {
