@@ -7,14 +7,14 @@ import com.tegarpenemuan.latihanroom.data.local.entity.NoteEntity
 interface NoteDAO {
 
     @Query("SELECT * FROM catatan")
-    fun getMessage(): List<NoteEntity>
+    fun getNote(): List<NoteEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMessage(noteEntity: NoteEntity): Long
+    fun insertNote(noteEntity: NoteEntity): Long
 
     @Update
-    fun updateMessage(noteEntity: NoteEntity): Int
+    fun updateNote(noteEntity: NoteEntity): Int
 
     @Delete
-    fun deleteMessage(noteEntity: NoteEntity): Int
+    fun deleteNote(noteEntity: NoteEntity): Int
 }

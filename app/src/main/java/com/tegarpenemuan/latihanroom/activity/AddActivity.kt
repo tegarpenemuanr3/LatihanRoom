@@ -20,6 +20,8 @@ class AddActivity : AppCompatActivity() {
         binding = ActivityAddBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        db = MyNoteDatabase.getInstance(applicationContext.applicationContext)
+
         binding.btnAdd.setOnClickListener {
             insertDataDatabase(
                 NoteEntity(
@@ -34,11 +36,12 @@ class AddActivity : AppCompatActivity() {
     // function untuk insert data pada database
     private fun insertDataDatabase(noteEntity: NoteEntity) {
         CoroutineScope(Dispatchers.IO).async {
-            val result = db?.noteDao()?.insertMessage(noteEntity)
+            val result = db?.noteDao()?.insertNote(noteEntity)
             this@AddActivity.runOnUiThread {
                 if (result != 0L) {
                     Toast.makeText(applicationContext, "Success insert", Toast.LENGTH_SHORT)
                         .show()
+                    onBackPressed()
 //                    loadDataDatabase()
                 } else {
                     Toast.makeText(applicationContext, "Failure insert", Toast.LENGTH_SHORT)
